@@ -1,2 +1,0 @@
-# sa-fintec
-fgbkgbptbmk[eryb
