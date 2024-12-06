@@ -1,0 +1,10 @@
+position: 2 # для сортировки папки в сайдбаре
+label: Функциональные требования # название пункта меню в сайдбаре
+collapsible: true
+collapsed: true
+link: 
+  type: generated-index
+  title: Use Case # Заголовок на странице
+
+
+  

@@ -1,5 +1,5 @@
 ---
-title: API 1 - Для работы с маршрутами
+title: API для работы с маршрутами
 hide_table_of_contents: true
 ---
 

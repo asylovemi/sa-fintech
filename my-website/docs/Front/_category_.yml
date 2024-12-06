@@ -1,0 +1,10 @@
+position: 4 # для сортировки папки в сайдбаре
+label: Frontend # название пункта меню в сайдбаре
+collapsible: true
+collapsed: true
+link: 
+  type: generated-index
+  title: Frontend # Заголовок на странице
+
+
+  

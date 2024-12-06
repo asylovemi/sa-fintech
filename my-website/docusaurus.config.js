@@ -47,6 +47,10 @@ const config = {
             id: 'routes',
             spec: 'api_specs/openapi.yaml',
           },
+          {
+            id: 'async',
+            spec: 'api_specs/integ.yaml',
+          }
         ],
         theme: {
           primaryColor: '#1890ff',
