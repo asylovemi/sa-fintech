@@ -1,0 +1,492 @@
+openapi: 3.0.3
+info:
+  title: Tour API
+  description: API для создания маршрутов, выбора готового маршрута и получения детальной информации о маршруте.
+  version: 1.0.0
+
+tags:
+  - name: Routes
+    description: Эндпоинты для управления маршрутами
+
+  - name: Locations
+    description: Эндпоинты для поиска и получения данных о местоположении
+
+  - name: Maps
+    description: Эндпоинты для рендеринга и обновлений карты
+
+paths:
+  /api/v1/routes/metadata:
+    get:
+      tags:
+        - Routes
+      summary: Получить метаданные для страницы
+      description: Возвращает данные для типов маршрутов, уровней сложности и других параметров фильтрации.
+      responses:
+        "200":
+          description: Успешный ответ с метаданными.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  filter:
+                    $ref: "#/components/schemas/Filter"
+                  default_settings:
+                    type: object
+                    properties:
+                      map_center:
+                        $ref: "#/components/schemas/Point"
+                      zoom:
+                        type: integer
+                        example: 10
+
+  /api/v1/routes/calculate:
+    post:
+      tags:
+        - Routes
+      summary: Рассчитать маршрут
+      description: Рассчитайте маршрут на основе указанных точек и фильтров.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                start_point:
+                  type: array
+                  items:
+                    type: number
+                end_point:
+                  type: array
+                  items:
+                    type: number
+                intermediate_points:
+                  type: array
+                  items:
+                    type: array
+                    items:
+                      type: number
+
+      responses:
+        "200":
+          description: Маршрут успешно рассчитан.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  route_id:
+                    type: string
+                  distance:
+                    type: number
+                  elevation_gain:
+                    type: number
+
+  /api/v1/routes:
+    post:
+      tags:
+        - Routes
+      summary: Сохранить маршрут.
+      description: Сохранить текущий маршрут как черновик или окончательную версию.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                start_point:
+                  $ref: "#/components/schemas/Waypoint"
+                end_point:
+                  $ref: "#/components/schemas/Waypoint"
+                intermediate_points:
+                  $ref: "#/components/schemas/Waypoints"
+                filter:
+                  $ref: "#/components/schemas/Filter" # ссылка на схему RouteInfo
+                status:
+                  type: string
+                  enum:
+                    - draft
+                    - final
+      responses:
+        "201":
+          description: Маршрут успешно сохранен.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  route_id:
+                    type: string
+
+  /api/v1/locations:
+    get:
+      tags:
+        - Locations
+      summary: Найти локации по названию или координатам
+      description: Ищет подходящие локации по текстовому запросу или координатам.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Запрос на поиск (название места или координаты).
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешный ответ с подсказками.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: "Красная площадь"
+                    location:
+                      $ref: "#/components/schemas/Point"
+                    type:
+                      type: string
+                      example: "Достопримечательность"
+
+  /api/v1/routes/search:
+    get:
+      tags:
+        - Routes
+      summary: Найти маршруты по фильтрам
+      description: Ищет маршруты, соответствующие заданным фильтрам.
+      parameters:
+        - name: route_type
+          in: query
+          required: false
+          description: Тип маршрута.
+          schema:
+            type: string
+        - name: difficulty_level
+          in: query
+          required: false
+          description: Уровень сложности маршрута.
+          schema:
+            type: string
+        - name: duration
+          in: query
+          required: false
+          description: Предполагаемая продолжительность маршрута (в часах).
+          schema:
+            type: integer
+        - name: elevation_gain
+          in: query
+          required: false
+          description: Максимальный набор высоты (в метрах).
+          schema:
+            type: integer
+        - name: season
+          in: query
+          required: false
+          description: Предпочтительный сезон.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Успешный ответ с найденными маршрутами.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: "route_123"
+                    name:
+                      type: string
+                      example: "Горный маршрут"
+                    description:
+                      type: string
+                      example: "Уникальный маршрут с потрясающими видами."
+                    distance:
+                      type: number
+                      example: 15.2
+                    elevation_gain:
+                      type: integer
+                      example: 500
+                    difficulty_level:
+                      type: string
+                      example: "medium"
+
+  /api/v1/map:
+    get:
+      tags:
+        - Maps
+      summary: Отобразить карту с текущими настройками
+      description: Возвращает данные для рендера карты, включая центр, масштаб и точки маршрута (если они есть).
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          description: Уникальный идентификатор пользователя, если нужно отобразить карту для авторизованного пользователя.
+          schema:
+            type: string
+            example: "user_123"
+        - name: route_id
+          in: query
+          required: false
+          description: Уникальный идентификатор маршрута, если нужно отобразить уже созданный маршрут.
+          schema:
+            type: string
+            example: "route_456"
+      responses:
+        "200":
+          description: Успешный ответ с данными для карты.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  map_center:
+                    $ref: "#/components/schemas/Point"
+                  zoom:
+                    type: integer
+                    description: Уровень масштаба карты.
+                    example: 10
+                  waypoints:
+                    $ref: "#/components/schemas/Waypoints"
+                  route_preview:
+                    type: string
+                    format: uri
+                    description: URL превью маршрута.
+                    example: "https://example.com/route-preview/route_456"
+        "400":
+          description: Неверный запрос (например, отсутствуют необходимые параметры).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  message:
+                    type: string
+                    example: "Неверные параметры запроса."
+
+    patch:
+      tags:
+        - Maps
+      summary: Изменить маршрут на карте
+      description: Добавить, удалить или обновить точки маршрута на карте.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [add, remove, update]
+                point:
+                  $ref: "#/components/schemas/Points"
+      responses:
+        "200":
+          description: Карта успешно обновлена.
+    delete:
+      tags:
+        - Maps
+      summary: Очистить карту
+      description: Удаляет все точки маршрута и сбрасывает карту в начальное состоянии.
+      responses:
+        "200":
+          description: Карта успешно очищена.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+
+                  message:
+                    type: string
+                    example: "Карта успешно очищена."
+        "400":
+          description: Ошибка запроса.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+
+                  message:
+                    type: string
+                    example: "Ошибка запроса"
+
+  /api/v1/routes/{route_id}:
+    get:
+      tags:
+        - Routes
+      summary: Получить краткую информацию о маршруте
+      parameters:
+        - name: route_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Уникальный идентификатор маршрута
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  description:
+                    type: string
+                example:
+                  id: "route123"
+                  name: "Горный поход"
+                  description: "Живописный маршрут через горные перевалы."
+        "404":
+          description: Маршрут не найден
+
+  /api/v1/routes/{route_id}/details:
+    get:
+      tags:
+        - Routes
+      summary: Получить подробную информацию о маршруте
+      parameters:
+        - name: route_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Уникальный идентификатор маршрута
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  filter:
+                    $ref: "#/components/schemas/Filter"
+                  waypoints:
+                    $ref: "#/components/schemas/Waypoints"
+                  description:
+                    type: string
+                    example: "Этот маршрут проходит через долины и перевалы с потрясающими видами."
+        "404":
+          description: Маршрут не найден
+
+  /api/v1/routes/favorite:
+    post:
+      tags:
+        - Routes
+      summary: Сохранить маршрут в профиль пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                route_id:
+                  type: string
+                  description: Уникальный идентификатор маршрута
+                is_favorite:
+                  type: boolean
+                  description: Флаг добавления маршрута в избранное
+              example:
+                route_id: "route123"
+                is_favorite: true
+      responses:
+        "200":
+          description: Маршрут успешно сохранен
+        "400":
+          description: Некорректные параметры запроса
+
+components:
+  schemas:
+    Waypoint:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Точка карты"
+        coordinates:
+          type: object
+          properties:
+            latitude:
+              type: number
+              example: 42.432
+            longitude:
+              type: number
+              example: 13.231
+
+    Waypoints:
+      type: array
+      items:
+        $ref: "#/components/schemas/Waypoint"
+
+    Point:
+      type: object
+      properties:
+        latitude:
+          type: number
+          example: 42.432
+        longitude:
+          type: number
+          example: 13.231
+
+    Points:
+      type: array
+      items:
+        $ref: "#/components/schemas/Point"
+
+    Filter:
+      type: object
+      properties:
+        route_type:
+          type: string
+          enum:
+            - hiking
+            - biking
+            - city
+            - auto
+        difficulty_levels:
+          type: string
+          enum:
+            - easy
+            - medium
+            - hard
+        duration:
+          type: integer
+          example: 15
+        elevation_gain:
+          type: integer
+          example: 500
+        season:
+          type: string
+          enum:
+            - summer
+            - autumn
+            - winter
+            - sprin

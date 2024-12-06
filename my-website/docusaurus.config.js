@@ -1,44 +1,25 @@
-// @ts-check
-// `@type` JSDoc annotations allow editor autocompletion and type checking
-// (when paired with `@ts-check`).
-// There are various equivalent ways to declare your Docusaurus config.
-// See: https://docusaurus.io/docs/api/docusaurus-config
+import { themes as prismThemes } from 'prism-react-renderer';
 
-import {themes as prismThemes} from 'prism-react-renderer';
-
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+const simplePlantUML = require("@akebifiky/remark-simple-plantuml"); // объявляем плагин для plantuml
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'AdventureSync',
-  tagline: 'Тут какая-то важная инфа о проекте',
-  favicon: 'img/favicon.ico',
-
-  // Set the production url of your site here
-  url: 'https://asylovemi.github.io',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: 'sa-fintech',
-
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'asylovemi', // Usually your GitHub org/user name.
-  projectName: 'sa-fintech', // Usually your repo name.
-
-  onBrokenLinks: 'warn',
-  onBrokenMarkdownLinks: 'warn',
-
+  title: 'AdventureSync', //Название сайта на начальной странице
+  tagline: 'Для туристиков', // Описание сайта на начальной странице
+  favicon: 'img/favicon.ico', // Иконка сайта
+  url: 'https://asylovemi.github.io/', // Адрес gitlab pages, обычно https://<username>.github.io
+  baseUrl: 'sa-fintech', // Базовый url, обычно название репозитория
+  organizationName: 'asylovemi', // Имя GitHub пользователя
+  projectName: 'sa-fintech', // Имя репозитория
+  onBrokenLinks: 'warn', // Чтобы не падать при наличии неработающих ссылок
+  onBrokenMarkdownLinks: 'warn', // Чтобы не падать при наличии неработающих ссылок
   trailingSlash: false,
-  deploymentBranch: 'gh-pages', 
+  deploymentBranch: 'gh-pages',
 
-  // Even if you don't use internationalization, you can use this field to set
-  // useful metadata like html lang. For example, if your site is Chinese, you
-  // may want to replace "en" with "zh-Hans".
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
-  },
-
+//подключаем плагин для drawio
+  plugins: [
+    ['drawio', {}]
+  ],
   presets: [
     [
       'classic',
@@ -46,10 +27,10 @@ const config = {
       ({
         docs: {
           sidebarPath: './sidebars.js',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
+          routeBasePath: 'docs',
           editUrl:
             'https://github.com/asylovemi/sa-fintech',
+          remarkPlugins: [simplePlantUML], //подключаем плагин для plantuml
         },
         blog: false,
         theme: {
@@ -57,12 +38,13 @@ const config = {
         },
       }),
     ],
+    // подключаем плагин для OPENAPI
     [
       'redocusaurus',
       {
         specs: [
           {
-            id: 'petstore',
+            id: 'routes',
             spec: 'api_specs/openapi.yaml',
           },
         ],
@@ -76,22 +58,23 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
-        title: 'AdventureSync',
+        title: 'AdventureSync', //Название на навбаре
         logo: {
           alt: 'My Site Logo',
-          src: 'img/logo.svg',
+          src: 'img/logo.svg', //Логотип на навбаре
         },
+        // тут можно настроить элементы навбара
         items: [
           {
-            href: 'https://github.com/asylovemi/sa-fintech',
+            href: 'https://github.com/asylovemi/doc-as-a-code-workshop',
+            label: 'GitHub',
             position: 'right',
-            label: 'Github',
           },
         ],
       },
+      // тут можно настроить элементы футера
       footer: {
         style: 'dark',
         links: [
