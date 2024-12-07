@@ -5,7 +5,7 @@ const simplePlantUML = require("@akebifiky/remark-simple-plantuml"); // объя
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'AdventureSync', //Название сайта на начальной странице
-  tagline: 'Для туристиков', // Описание сайта на начальной странице
+  tagline: 'Документация', // Описание сайта на начальной странице
   favicon: 'img/favicon.ico', // Иконка сайта
   url: 'https://asylovemi.github.io/', // Адрес gitlab pages, обычно https://<username>.github.io
   baseUrl: 'sa-fintech', // Базовый url, обычно название репозитория
@@ -47,10 +47,6 @@ const config = {
             id: 'routes',
             spec: 'api_specs/openapi.yaml',
           },
-          {
-            id: 'async',
-            spec: 'api_specs/integ.yaml',
-          }
         ],
         theme: {
           primaryColor: '#1890ff',

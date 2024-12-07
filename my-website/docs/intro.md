@@ -1,47 +1,65 @@
 ---
+title: Домашняя страница
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Adventure Sync
 
-Let's discover **Docusaurus in less than 5 minutes**.
+:::info
+**Adventure Sync** — это информационная система, помогающая туристам и путешественникам планировать безопасные и увлекательные маршруты и находить попутчиков
+:::
 
-## Getting Started
+---
 
-Get started by **creating a new site**.
+## Основные функциональные возможности
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+- **Маршруты**: Возможность создавать / изменять / просматривать / удалять маршруты.
+- **Попутчики**: Поиск / общение с попутчиками.
 
-### What you'll need
+---
 
-- [Node.js](https://nodejs.org/en/download/) version 18.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+## Архитектура
 
-## Generate a new site
+- **Тип**: Монолитная архитектура.
+- **Технологии**:
+  - **Backend**: Java/Kotlin, PostgreSQL, Kafka, Redis, RabbitMQ.
+  - **Frontend**: React, Redux.
+  - **Мобильное приложение**: React Native.
+  - **API**: RESTful API для взаимодействия с клиентскими приложениями.
+  - **Хостинг**: Yandex Cloud, S3 для хранения изображений и данных.
 
-Generate a new Docusaurus site using the **classic template**.
+---
 
-The classic template will automatically be added to your project after you run the command:
+## Статус сервиса
 
-```bash
-npm init docusaurus@latest my-website classic
-```
+- **Текущая версия**: 1.3.0
+- **Дата последнего обновления**: 2024-12-01
+- **Режим работы**: 24/7
+- **Доступность**: 99.9% Uptime (ежемесячная статистика).
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+---
 
-The command also installs all necessary dependencies you need to run Docusaurus.
+## Логи
 
-## Start your site
+- Логи работы сервиса и ошибок можно просматривать по следующему адресу:
+  - [Логи сервиса](https://logs.adventure-sync.com)
+- Используемая система для логирования: **ElasticSearch** с Grafana для визуализации.
 
-Run the development server:
+---
 
-```bash
-cd my-website
-npm run start
-```
+## Метрики
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
+- **Метрики производительности**:
+  - Время отклика API: среднее — 120 ms, пик — 500 ms.
+  - Время загрузки страницы: среднее — 2.5 секунды.
+  - Ошибки запросов: `< 1%`
+- Метрики можно отслеживать через [систему мониторинга](https://metrics.adventure-sync.com).
 
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
+---
 
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+## Контакты команды
+
+- **Разработчики**: devs@adventure-sync.com
+- **Поддержка клиентов**: support@adventure-sync.com
+- **Вопросы по безопасности**: security@adventure-sync.com
+- **Контакты для партнёрства**: partners@adventure-sync.com
